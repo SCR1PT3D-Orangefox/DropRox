@@ -10,80 +10,86 @@
 </head>
 <body class="bg-gray-950 text-white min-h-screen">
   <div id="login" class="min-h-screen flex items-center justify-center">
-    <div class="bg-gray-900 p-10 rounded-3xl shadow-2xl w-96">
-      <h1 class="text-4xl font-bold text-center mb-8">Hunter's Drive</h1>
-      <input id="passInput" type="password" placeholder="Master password" class="w-full p-4 bg-gray-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg">
-      <button onclick="login()" class="mt-6 w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-2xl font-semibold text-lg">Unlock</button>
+    <div class="bg-gray-900 p-10 rounded-3xl shadow-2xl w-96 text-center">
+      <h1 class="text-4xl font-bold mb-8">Hunter's Drive</h1>
+      <input id="passInput" type="password" placeholder="Master password" class="w-full p-4 bg-gray-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg mb-4">
+      <button onclick="login()" class="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-2xl font-semibold text-lg">Unlock</button>
     </div>
   </div>
 
-  <div id="app" class="hidden">
-    <div class="flex items-center justify-between border-b border-gray-800 p-6">
+  <div id="app" class="hidden flex flex-col h-screen">
+    <!-- Header -->
+    <div class="flex items-center justify-between border-b border-gray-800 p-4 md:p-6 bg-gray-900">
       <div class="flex items-center gap-4">
-        <h1 class="text-3xl font-bold flex items-center gap-3"><i class="fas fa-lock"></i> Hunter's Drive</h1>
-        <div id="status" class="text-green-400 text-sm flex items-center gap-1"><i class="fas fa-circle"></i> Online</div>
+        <h1 class="text-2xl md:text-3xl font-bold flex items-center gap-3"><i class="fas fa-lock text-blue-500"></i> Hunter's Drive</h1>
+        <div id="status" class="text-green-400 text-sm flex items-center gap-1"><i class="fas fa-circle text-xs"></i> Online</div>
       </div>
-      <div class="flex items-center gap-4">
-        <input id="search" placeholder="Search..." oninput="debouncedSearch()" class="bg-gray-900 border border-gray-700 rounded-2xl px-6 py-3 w-96 focus:outline-none">
-        <button onclick="toggleView()" id="viewBtn" class="px-5 py-3 bg-gray-800 hover:bg-gray-700 rounded-2xl"><i class="fas fa-th-large"></i></button>
-        <button onclick="logout()" class="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-2xl">Lock</button>
+      <div class="flex items-center gap-3 md:gap-4">
+        <input id="search" placeholder="Search..." oninput="debouncedSearch()" class="hidden md:block bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 w-64 focus:outline-none focus:border-blue-500">
+        <button onclick="toggleView()" id="viewBtn" class="p-3 bg-gray-800 hover:bg-gray-700 rounded-xl"><i class="fas fa-th-large"></i></button>
+        <button onclick="logout()" class="p-3 bg-red-700 hover:bg-red-800 rounded-xl">Lock</button>
       </div>
     </div>
 
-    <div id="breadcrumbs" class="px-6 py-3 bg-gray-900 flex gap-2 text-sm flex-wrap"></div>
+    <!-- Breadcrumbs -->
+    <div id="breadcrumbs" class="px-4 md:px-6 py-3 bg-gray-900 text-sm flex flex-wrap gap-2 overflow-x-auto border-b border-gray-800"></div>
 
-    <div class="px-6 py-4 flex gap-3 border-b border-gray-800 flex-wrap">
-      <button onclick="document.getElementById('fileInput').click()" class="flex items-center gap-2 bg-green-600 hover:bg-green-700 px-6 py-3 rounded-2xl"><i class="fas fa-upload"></i> Upload</button>
-      <button onclick="createFolder()" class="flex items-center gap-2 bg-gray-700 hover:bg-gray-600 px-6 py-3 rounded-2xl"><i class="fas fa-folder-plus"></i> New Folder</button>
-      <select id="sortSelect" onchange="sortAndRender()" class="bg-gray-800 rounded-2xl px-4 py-3">
+    <!-- Toolbar -->
+    <div class="px-4 md:px-6 py-4 flex flex-wrap gap-3 border-b border-gray-800 bg-gray-900">
+      <button onclick="document.getElementById('fileInput').click()" class="flex items-center gap-2 bg-green-600 hover:bg-green-700 px-5 py-3 rounded-xl shadow"><i class="fas fa-upload"></i> Upload</button>
+      <button onclick="createFolder()" class="flex items-center gap-2 bg-gray-700 hover:bg-gray-600 px-5 py-3 rounded-xl shadow"><i class="fas fa-folder-plus"></i> New Folder</button>
+      <select id="sortSelect" onchange="sortAndRender()" class="bg-gray-800 rounded-xl px-4 py-3">
         <option value="name">Name</option>
         <option value="size">Size</option>
         <option value="date">Date</option>
       </select>
     </div>
 
-    <div class="flex h-[calc(100vh-220px)]">
-      <div class="w-72 bg-gray-900 border-r border-gray-800 p-4 overflow-auto hidden md:block">
-        <h3 class="font-semibold mb-4 flex items-center gap-2"><i class="fas fa-clock"></i> Recent</h3>
-        <div id="recentList" class="space-y-3"></div>
-      </div>
-
-      <div class="flex-1 p-6 overflow-auto relative">
+    <div class="flex flex-1 overflow-hidden">
+      <!-- Main content -->
+      <div class="flex-1 p-4 md:p-6 overflow-auto">
         <input id="fileInput" type="file" multiple class="hidden" onchange="handleUpload(event)">
-        <div id="dropZone" class="border-4 border-dashed border-gray-600 rounded-3xl h-64 md:h-96 flex flex-col items-center justify-center text-gray-400 hover:border-blue-500 hover:text-blue-400 transition-all text-2xl font-bold mb-8">
-          Drop files here<br>or click Upload
+
+        <!-- Big drop zone -->
+        <div id="dropZone" class="border-4 border-dashed border-gray-600 rounded-3xl h-48 md:h-64 flex flex-col items-center justify-center text-gray-400 hover:border-blue-500 hover:text-blue-400 transition-all mb-8 text-xl md:text-2xl font-bold">
+          Drop files here or click Upload
         </div>
-        <div id="fileGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6"></div>
+
+        <div id="fileGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6"></div>
         <div id="fileListView" class="hidden mt-4 space-y-3"></div>
       </div>
 
+      <!-- Preview modal -->
       <div id="previewModal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
-        <div class="bg-gray-900 rounded-3xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-          <div class="flex justify-between items-center p-6 border-b border-gray-700">
-            <h3 id="previewName" class="text-xl font-bold truncate flex-1 pr-4"></h3>
-            <button onclick="closePreview()" class="text-4xl leading-none hover:text-gray-300">&times;</button>
+        <div class="bg-gray-900 rounded-3xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
+          <div class="flex justify-between items-center p-4 md:p-6 border-b border-gray-700">
+            <h3 id="previewName" class="text-lg md:text-xl font-bold truncate flex-1 pr-4"></h3>
+            <button onclick="closePreview()" class="text-3xl md:text-4xl leading-none hover:text-gray-300">×</button>
           </div>
-          <div id="previewContent" class="p-6 flex-1 overflow-auto bg-gray-950"></div>
+          <div id="previewContent" class="p-4 md:p-6 flex-1 overflow-auto bg-gray-950"></div>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    let masterPass = '', currentPath = '/', files = [], viewMode = 'grid';
-    const API = 'https://rhiannon-splashiest-virilely.ngrok-free.dev';  // UPDATE YOUR NGROK
+    let masterPass = localStorage.getItem('masterPass') || '';
+    let currentPath = '/';
+    let files = [];
+    let viewMode = 'grid';
+    const API = 'https://rhiannon-splashiest-virilely.ngrok-free.dev'; // ← YOUR CURRENT NGROK URL
 
-    // Crypto helpers
-    async function deriveKey(pass, salt) {
+    // Crypto
+    async function deriveKey(salt) {
       const enc = new TextEncoder();
-      const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(pass), 'PBKDF2', false, ['deriveBits', 'deriveKey']);
-      return crypto.subtle.deriveKey({name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256'}, keyMaterial, {name: 'AES-GCM', length: 256}, false, ['encrypt', 'decrypt']);
+      const material = await crypto.subtle.importKey('raw', enc.encode(masterPass), 'PBKDF2', false, ['deriveBits', 'deriveKey']);
+      return crypto.subtle.deriveKey({name: 'PBKDF2', salt: new Uint8Array(salt), iterations: 100000, hash: 'SHA-256'}, material, {name: 'AES-GCM', length: 256}, false, ['encrypt', 'decrypt']);
     }
 
     async function encryptFile(file) {
       const salt = crypto.getRandomValues(new Uint8Array(16));
       const iv = crypto.getRandomValues(new Uint8Array(12));
-      const key = await deriveKey(masterPass, salt);
+      const key = await deriveKey(salt);
       const buf = await file.arrayBuffer();
       const encrypted = await crypto.subtle.encrypt({name: 'AES-GCM', iv}, key, buf);
       const combined = new Uint8Array(salt.byteLength + iv.byteLength + encrypted.byteLength);
@@ -95,18 +101,22 @@
 
     async function decryptBlob(blob) {
       const buf = await blob.arrayBuffer();
-      const salt = buf.slice(0, 16);
-      const iv = buf.slice(16, 28);
+      const salt = new Uint8Array(buf.slice(0, 16));
+      const iv = new Uint8Array(buf.slice(16, 28));
       const cipher = buf.slice(28);
-      const key = await deriveKey(masterPass, new Uint8Array(salt));
-      const decrypted = await crypto.subtle.decrypt({name: 'AES-GCM', iv: new Uint8Array(iv)}, key, cipher);
+      const key = await deriveKey(salt);
+      const decrypted = await crypto.subtle.decrypt({name: 'AES-GCM', iv}, key, cipher);
       return new Blob([decrypted]);
     }
 
     async function login() {
       const pass = document.getElementById('passInput').value.trim();
-      if (!pass) return alert('Need the password boss');
-      const res = await fetch(`${API}/auth`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({password: pass})});
+      if (!pass) return alert('Enter password');
+      const res = await fetch(`${API}/auth`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({password: pass})
+      });
       if (res.ok) {
         masterPass = pass;
         localStorage.setItem('masterPass', pass);
@@ -114,61 +124,67 @@
         document.getElementById('app').classList.remove('hidden');
         loadFiles();
       } else {
-        alert('Wrong pass – try again');
+        alert('Wrong password');
       }
     }
 
     async function loadFiles() {
-      const res = await fetch(`${API}/files?path=${encodeURIComponent(currentPath)}`);
-      if (!res.ok) return alert('Load failed – backend down?');
-      files = await res.json();
-      sortAndRender();
-      renderBreadcrumbs();
-      renderRecent();
+      try {
+        const res = await fetch(`${API}/files?path=${encodeURIComponent(currentPath)}`);
+        files = await res.json();
+        sortAndRender();
+        renderBreadcrumbs();
+      } catch (e) {
+        console.error(e);
+        document.getElementById('status').innerHTML = '<i class="fas fa-circle text-red-400 text-xs"></i> Offline';
+      }
     }
 
     function formatBytes(bytes) {
-      if (!bytes) return '0 B';
-      const k = 1024, sizes = ['B','KB','MB','GB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      if (!bytes) return '—';
+      const units = ['B', 'KB', 'MB', 'GB'];
+      let size = bytes, i = 0;
+      while (size >= 1024 && i < units.length - 1) { size /= 1024; i++; }
+      return size.toFixed(1) + ' ' + units[i];
     }
 
-    function renderFiles(filtered = files) {
+    function renderFiles() {
       const grid = document.getElementById('fileGrid');
       const list = document.getElementById('fileListView');
       grid.innerHTML = list.innerHTML = '';
+
       const container = viewMode === 'grid' ? grid : list;
       if (viewMode === 'list') list.classList.remove('hidden'); else grid.classList.remove('hidden');
 
-      filtered.forEach(item => {
-        const el = document.createElement('div');
-        el.className = `bg-gray-900 rounded-2xl p-4 cursor-pointer hover:bg-gray-800 transition ${viewMode==='list' ? 'flex items-center gap-4' : ''}`;
+      files.forEach(item => {
+        const card = document.createElement('div');
+        card.className = `bg-gray-900 rounded-xl p-4 cursor-pointer hover:bg-gray-800 transition-all ${viewMode==='list' ? 'flex items-center gap-4' : 'text-center'}`;
+        
         if (item.is_folder) {
-          el.innerHTML = viewMode === 'grid' ? `
-            <div class="text-6xl mb-3 text-center">📁</div>
-            <div class="font-medium truncate text-center">${item.name}</div>
+          card.innerHTML = viewMode === 'grid' ? `
+            <div class="text-5xl mb-2">📁</div>
+            <div class="font-medium truncate">${item.name}</div>
           ` : `
             <div class="text-4xl">📁</div>
-            <div class="flex-1 font-medium">${item.name}</div>
+            <div class="flex-1 font-medium text-left">${item.name}</div>
           `;
-          el.onclick = () => {
+          card.onclick = () => {
             currentPath = currentPath === '/' ? `/${item.name}/` : currentPath + item.name + '/';
             loadFiles();
           };
         } else {
-          el.innerHTML = viewMode === 'grid' ? `
-            <div class="text-6xl mb-3 text-center">📄</div>
-            <div class="font-medium truncate text-center">${item.name}</div>
-            <div class="text-xs text-gray-400 text-center">${formatBytes(item.size)} • ${new Date(item.uploaded).toLocaleDateString()}</div>
+          card.innerHTML = viewMode === 'grid' ? `
+            <div class="text-5xl mb-2">📄</div>
+            <div class="font-medium truncate">${item.name}</div>
+            <div class="text-xs text-gray-400 mt-1">${formatBytes(item.size)} • ${new Date(item.uploaded).toLocaleDateString()}</div>
           ` : `
             <div class="text-4xl">📄</div>
-            <div class="flex-1 font-medium">${item.name}</div>
+            <div class="flex-1 text-left font-medium">${item.name}</div>
             <div class="text-sm text-gray-400">${formatBytes(item.size)} • ${new Date(item.uploaded).toLocaleDateString()}</div>
           `;
-          el.onclick = () => previewOrDownload(item);
+          card.onclick = () => previewFile(item);
         }
-        container.appendChild(el);
+        container.appendChild(card);
       });
     }
 
@@ -180,10 +196,10 @@
       renderFiles();
     }
 
-    let searchTimer;
+    let searchTimeout;
     function debouncedSearch() {
-      clearTimeout(searchTimer);
-      searchTimer = setTimeout(() => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
         const term = document.getElementById('search').value.toLowerCase().trim();
         const filtered = files.filter(f => !f.is_folder && f.name.toLowerCase().includes(term));
         renderFiles(filtered);
@@ -191,45 +207,58 @@
     }
 
     async function handleUpload(e) {
+      e.preventDefault();
       const uploadFiles = e.target?.files || e.dataTransfer?.files || [];
-      if (!uploadFiles.length) return;
+      if (uploadFiles.length === 0) return;
+
       for (let file of uploadFiles) {
-        const encrypted = await encryptFile(file);
-        const form = new FormData();
-        form.append('file', encrypted, file.name);
-        form.append('path', currentPath);
-        const res = await fetch(`${API}/upload`, {method: 'POST', body: form});
-        if (!res.ok) alert('Upload failed for ' + file.name);
+        try {
+          const encryptedBlob = await encryptFile(file);
+          const form = new FormData();
+          form.append('file', encryptedBlob, file.name + '.enc');
+          form.append('path', currentPath);
+
+          const res = await fetch(`${API}/upload`, {method: 'POST', body: form});
+          if (!res.ok) throw new Error('Upload failed');
+        } catch (err) {
+          console.error(err);
+          alert('Failed to upload ' + file.name + ' – check console');
+        }
       }
-      loadFiles();
+      document.getElementById('fileInput').value = '';
+      loadFiles();  // refresh list + recent
     }
 
-    document.getElementById('dropZone').addEventListener('drop', e => { e.preventDefault(); handleUpload(e); });
     document.getElementById('dropZone').addEventListener('dragover', e => e.preventDefault());
+    document.getElementById('dropZone').addEventListener('drop', handleUpload);
 
-    async function previewOrDownload(item) {
-      const res = await fetch(`${API}/download/${item.id}?name=${encodeURIComponent(item.name)}`);
-      if (!res.ok) return alert('Download failed');
-      const blob = await res.blob();
+    async function previewFile(item) {
       try {
+        const res = await fetch(`${API}/download/${item.id}?name=${encodeURIComponent(item.name)}`);
+        if (!res.ok) throw new Error('Download failed');
+        const blob = await res.blob();
         const decrypted = await decryptBlob(blob);
         const url = URL.createObjectURL(decrypted);
+
         document.getElementById('previewName').textContent = item.name;
         const content = document.getElementById('previewContent');
         content.innerHTML = '';
-        if (item.name.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
-          content.innerHTML = `<img src="${url}" class="max-h-[70vh] mx-auto rounded-xl object-contain">`;
-        } else if (item.name.match(/\.(mp4|webm|ogg)$/i)) {
-          content.innerHTML = `<video src="${url}" controls autoplay class="max-h-[70vh] mx-auto rounded-xl"></video>`;
-        } else if (item.name.match(/\.pdf$/i)) {
-          content.innerHTML = `<iframe src="${url}" class="w-full h-[70vh] rounded-xl"></iframe>`;
+
+        if (/\.(jpg|jpeg|png|gif|webp)$/i.test(item.name)) {
+          content.innerHTML = `<img src="${url}" class="max-h-[75vh] mx-auto rounded-xl object-contain">`;
+        } else if (/\.(mp4|webm|ogg)$/i.test(item.name)) {
+          content.innerHTML = `<video src="${url}" controls autoplay class="max-h-[75vh] mx-auto rounded-xl"></video>`;
+        } else if (/\.pdf$/i.test(item.name)) {
+          content.innerHTML = `<iframe src="${url}" class="w-full h-[75vh] rounded-xl"></iframe>`;
         } else {
           const text = await decrypted.text();
-          content.innerHTML = `<pre class="bg-gray-800 p-6 rounded-xl overflow-auto text-sm whitespace-pre-wrap">${text}</pre>`;
+          content.innerHTML = `<pre class="whitespace-pre-wrap text-sm bg-gray-800 p-4 rounded-xl overflow-auto">${text}</pre>`;
         }
+
         document.getElementById('previewModal').classList.remove('hidden');
       } catch (err) {
-        alert('Decrypt failed – wrong password?');
+        console.error(err);
+        alert('Preview failed – wrong password or corrupted file?');
       }
     }
 
@@ -241,30 +270,17 @@
     function renderBreadcrumbs() {
       const bc = document.getElementById('breadcrumbs');
       bc.innerHTML = '<span class="cursor-pointer hover:text-blue-400" onclick="goToPath(\'/')">Home</span>';
-      const parts = currentPath.split('/').filter(Boolean);
-      let path = '/';
-      parts.forEach((p, i) => {
-        path += p + '/';
-        bc.innerHTML += `<span class="text-gray-500 mx-1">/</span><span class="cursor-pointer hover:text-blue-400" onclick="goToPath('${path}')">${p}</span>`;
+      const parts = currentPath.split('/').filter(p => p);
+      let accum = '/';
+      parts.forEach(p => {
+        accum += p + '/';
+        bc.innerHTML += ` <span class="text-gray-500">/</span> <span class="cursor-pointer hover:text-blue-400" onclick="goToPath('${accum}')">${p}</span>`;
       });
     }
 
     function goToPath(path) {
       currentPath = path;
       loadFiles();
-    }
-
-    function renderRecent() {
-      const list = document.getElementById('recentList');
-      list.innerHTML = '';
-      const recent = files.filter(f => !f.is_folder).sort((a,b) => new Date(b.uploaded) - new Date(a.uploaded)).slice(0,5);
-      recent.forEach(f => {
-        const div = document.createElement('div');
-        div.className = 'bg-gray-800 p-3 rounded-xl cursor-pointer hover:bg-gray-700';
-        div.innerHTML = `<div class="font-medium truncate">${f.name}</div><div class="text-xs text-gray-400">${new Date(f.uploaded).toLocaleString()}</div>`;
-        div.onclick = () => previewOrDownload(f);
-        list.appendChild(div);
-      });
     }
 
     function toggleView() {
@@ -274,31 +290,38 @@
     }
 
     async function createFolder() {
-      const name = prompt('Folder name (no slashes):');
-      if (!name || name.includes('/')) return alert('Invalid name');
-      const res = await fetch(`${API}/create_folder`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({name, path: currentPath})});
+      const name = prompt('Folder name:');
+      if (!name || name.trim() === '') return;
+      const res = await fetch(`${API}/create_folder`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({name: name.trim(), path: currentPath})
+      });
       if (res.ok) loadFiles();
-      else alert('Folder create failed');
+      else alert('Could not create folder');
     }
 
     function logout() {
-      masterPass = '';
       localStorage.removeItem('masterPass');
       location.reload();
     }
 
-    window.onload = () => {
-      if (localStorage.getItem('masterPass')) {
-        masterPass = localStorage.getItem('masterPass');
-        document.getElementById('login').classList.add('hidden');
-        document.getElementById('app').classList.remove('hidden');
-        loadFiles();
-      }
-      setInterval(() => {
-        fetch(API).then(() => document.getElementById('status').innerHTML = '<i class="fas fa-circle text-green-400"></i> Online')
-                 .catch(() => document.getElementById('status').innerHTML = '<i class="fas fa-circle text-red-400"></i> Offline');
-      }, 10000);
-    };
+    // Auto-login if pass saved
+    if (masterPass) {
+      document.getElementById('login').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+      loadFiles();
+    }
+
+    // Status ping
+    setInterval(() => {
+      fetch(API, {method: 'HEAD'})
+        .then(() => document.getElementById('status').innerHTML = '<i class="fas fa-circle text-green-400 text-xs"></i> Online')
+        .catch(() => document.getElementById('status').innerHTML = '<i class="fas fa-circle text-red-400 text-xs"></i> Offline');
+    }, 8000);
+
+    // Initial drop zone events
+    document.getElementById('dropZone').addEventListener('click', () => document.getElementById('fileInput').click());
   </script>
 </body>
 </html>
